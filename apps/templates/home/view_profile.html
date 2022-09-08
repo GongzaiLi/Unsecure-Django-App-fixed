@@ -1,0 +1,63 @@
+{% extends "layouts/base.html" %}
+{% block title %}
+  Profile
+{% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+
+{% block stylesheets %}
+ 
+{% endblock stylesheets %}
+ 
+{% block content %}
+
+  <div class="container-fluid py-4">
+    <div class="row min-vh-85">
+      <div class="col-md-12 mb-md-0 mb-4">
+        <div class="page-header height-100 border-radius-xl">
+          <span class="mask bg-gradient-primary opacity-6"></span>
+        </div>
+        <div class="card card-body blur shadow-blur mt-n6 overflow-hidden">
+          <div class="row gx-4">
+            <div class="col-auto">
+              <div class="avatar avatar-xl position-relative">
+                {% if profile.picture_file %}
+                  <img src="{{ MEDIA_URL }}{{ profile.picture_file }}"
+                       alt="profile_image"
+                       class="w-100 border-radius-lg shadow-sm"/>
+                {% else %}
+                  <img src="{{ ASSETS_ROOT }}/img/default_profile.png"
+                       alt="profile_image"
+                       class="w-100 border-radius-lg shadow-sm"/>
+                {% endif %}
+              </div>
+            </div>
+            <div class="col-auto my-auto">
+              <div class="h-100">
+                <h5 class="mb-1">{{ profile.user.first_name }} {{ profile.user.last_name }}</h5>
+                <p class="text-xs font-weight-bold">{{ profile.user.email }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="container-fluid py-4">
+          <div class="card-body">
+            <label>Bio</label>
+            <div class="mb-3">
+              {% if profile.bio_file %}
+                {% include profile.bio_file.path %}
+              {% endif %}
+            </div>
+            <label>Their projects</label>
+            {% include "home/project_table.html" with projects=profile.project_set.all %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+ 
+{% endblock javascripts %}

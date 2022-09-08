@@ -1,0 +1,87 @@
+{% extends "layouts/base.html" %}
+{% block title %}
+  {% if new_or_edit == "new" %}
+    Create a new
+  {% else %}
+    Edit
+  {% endif %}
+  project
+{% endblock title %}
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+{% endblock stylesheets %}
+{% block content %}
+  <div class="container-fluid py-4">
+    <div class="row min-vh-85">
+      <div class="col-md-12 mb-md-0 mb-4">
+        <div class="page-header height-100 border-radius-xl">
+          <span class="mask bg-gradient-primary opacity-6"></span>
+        </div>
+        <div class="card card-body blur shadow-blur mt-n6 overflow-hidden">
+          <div class="row gx-4">
+            <div class="col-auto">
+              <div class="avatar avatar-xl position-relative">
+                {% if form.picture_file.value %}
+                  <img src="{{ MEDIA_URL }}{{ form.picture_file.value }}"
+                       alt="project_image"
+                       class="w-100 border-radius-lg shadow-sm"/>
+                {% else %}
+                  <img src="{{ ASSETS_ROOT }}/img/default_project.png"
+                       alt="project_image"
+                       class="w-100 border-radius-lg shadow-sm"/>
+                {% endif %}
+              </div>
+            </div>
+            <div class="col-auto my-auto">
+              <div class="h-100">
+                <h5 class="mb-1">
+                  {% if new_or_edit == "new" %}
+                    New project
+                  {% else %}
+                    Edit project <i>{{ form.name.value }}</i>
+                  {% endif %}
+                </h5>
+                {% if msg %}<h6 class="text-danger">{{ msg }}</h6>{% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body py-4">
+          <form role="form text-left" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <p>
+              <label>Project name</label>
+              <div class="mb-3">{{ form.name }}</div>
+              <span class="text-error">{{ form.name.errors }}</span>
+            </p>
+            <p>
+              <label>Project logo</label>
+              <div class="mb-3">{{ form.picture_file }}</div>
+              <span class="text-error">{{ form.picture_file.errors }}</span>
+            </p>
+            <p>
+              <label>Project budget</label>
+              <div class="mb-3">{{ form.budget }}</div>
+              <span class="text-error">{{ form.budget.errors }}</span>
+            </p>
+            <p>
+              <label>Project members</label>
+              <div class="mb-3">{{ form.members }}</div>
+              <span class="text-error">{{ form.members.errors }}</span>
+            </p>
+            <div class="d-flex">
+              <div class="text-center col-md-2">
+                <button type="submit"
+                        name="submit_project"
+                        class="btn bg-gradient-dark w-100 my-4 mb-2">Submit changes</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+{% endblock javascripts %}

@@ -1,0 +1,77 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} All Profiles {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+  <div class="row min-vh-85">
+    <div class="col-12">
+      <div class="card mb-4">
+        <div class="card-header pb-0">
+          <h6>User Profiles</h6>
+        </div>
+        <div class="card-body px-0 pt-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">User</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Projects</th>
+                  <th class="text-secondary opacity-7"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for profile in profiles.all %}
+                  <tr>
+                    <td>
+                      <div class="d-flex px-2 py-1">
+                        {% if profile.picture_file %}
+                          <img
+                            src="{{ MEDIA_URL }}{{ profile.picture_file }}"
+                            alt="profile_image"
+                            class="avatar avatar-sm me-3"
+                          />
+                        {% else %}
+                          <img
+                            src="{{ ASSETS_ROOT }}/img/default_profile.png"
+                            alt="profile_image"
+                            class="avatar avatar-sm me-3"
+                          />
+                        {% endif %}
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">{{ profile.user.first_name }} {{ profile.user.last_name }}</h6>
+                          <p class="text-xs text-secondary mb-0">{{ profile.user.email }}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      {% for project in profile.project_set.all %}
+                        <p class="text-xs font-weight-bold mb-0">
+                          {{ project.name }}, <span class="text-xs text-secondary mb-0">$&nbsp;{{ project.budget }}</span>
+                        </p>                        
+                      {% endfor %}
+                    </td>
+                    <td class="align-middle">
+                      <a href="{% url "view_profile" user_id=profile.user.id %}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="View user profile">
+                        View profile
+                      </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}{% endblock javascripts %}

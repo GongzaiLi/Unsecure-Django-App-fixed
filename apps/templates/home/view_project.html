@@ -1,0 +1,120 @@
+{% extends "layouts/base.html" %}
+{% block title %}
+  Profile
+{% endblock title %}
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+{% endblock stylesheets %}
+{% block content %}
+  <div class="container-fluid py-4">
+    <div class="row min-vh-85">
+      <div class="col-md-12 mb-md-0 mb-4">
+        <div class="page-header height-100 border-radius-xl">
+          <span class="mask bg-gradient-primary opacity-6"></span>
+        </div>
+        <div class="card card-body blur shadow-blur mt-n6 overflow-hidden">
+          <div class="row gx-4">
+            <div class="col-auto">
+              <div class="avatar avatar-xl position-relative">
+                {% if project.picture_file %}
+                  <img src="{{ MEDIA_URL }}{{ project.picture_file }}"
+                       alt="project_image"
+                       class="w-100 border-radius-lg shadow-sm"/>
+                {% else %}
+                  <img src="{{ ASSETS_ROOT }}/img/default_project.png"
+                       alt="project_image"
+                       class="w-100 border-radius-lg shadow-sm"/>
+                {% endif %}
+              </div>
+            </div>
+            <div class="col-auto my-auto">
+              <div class="h-100">
+                <h5 class="mb-4">{{ project.name }}</h5>
+                <p class="text-xs font-weight-bold">Budget: {{ project.budget }}</p>
+              </div>
+            </div>
+            <div class="progress-wrapper mx-auto">
+              <span class="text-xs">Progress:</span>
+              <div class="progress-info">
+                <div class="progress-percentage">
+                  <span class="text-xs font-weight-bold">{{ project.completion }}%</span>
+                </div>
+              </div>
+              <div class="progress col-md-2">
+                <div class="progress-bar bg-gradient-info w-{{ project.completion }}"
+                     role="progressbar"
+                     aria-valuenow="{{ project.completion }}"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container-fluid py-4">
+          <div class="card-body">
+            <label>Members</label>
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">User</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Username</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Email</th>
+                    <th class="text-secondary opacity-7"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for member in project.members.all %}
+                    <tr>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          {% if member.picture_file %}
+                            <img src="{{ MEDIA_URL }}{{ member.picture_file }}"
+                                 alt="profile_image"
+                                 class="avatar avatar-sm me-3"/>
+                          {% else %}
+                            <img src="{{ ASSETS_ROOT }}/img/default_profile.png"
+                                 alt="profile_image"
+                                 class="avatar avatar-sm me-3"/>
+                          {% endif %}
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ member.user.first_name }} {{ member.user.last_name }}</h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <h6 class="mb-0 text-sm">{{ member.user.username }}</h6>
+                      </td>
+                      <td>
+                        <h6 class="mb-0 text-sm">{{ member.user.email }}</h6>
+                      </td>
+                      <td class="align-middle">
+                        <a href="{% url "view_profile" user_id=member.user.id %}"
+                           class="text-secondary font-weight-bold text-xs"
+                           data-toggle="tooltip"
+                           data-original-title="View user profile">
+                          View profile
+                        </a>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex">
+          <div class="text-center col-md2">
+            <a href="{% url "edit_project" project_id=project.id user_id=user.id %}"
+               type="button"
+               class="btn bg-gradient-dark w-100 my-4 mb-2">Edit project</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+{% endblock javascripts %}

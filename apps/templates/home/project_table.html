@@ -1,0 +1,81 @@
+<table class="table align-items-center mb-0">
+  <thead>
+    <tr>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Projects</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Members</th>
+      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Budget</th>
+      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Completion</th>
+      <th class="text-secondary opacity-7"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for project in projects %}
+      <tr>
+        <td>
+          <div class="d-flex px-2 py-1">
+            {% if project.picture_file %}
+              <img src="{{ MEDIA_URL }}{{ project.picture_file }}"
+                   alt="project_image"
+                   class="avatar avatar-sm me-3"/>
+            {% else %}
+              <img src="{{ ASSETS_ROOT }}/img/default_project.png"
+                   alt="profile_image"
+                   class="avatar avatar-sm me-3"/>
+            {% endif %}
+            <div class="d-flex flex-column justify-content-center">
+              <h6 class="mb-0 text-sm">{{ project.name }}</h6>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="avatar-group mt-2">
+            {% for member in project.members.all %}
+              <a href="{% url "view_profile" user_id=member.user.id %}"
+                 class="avatar avatar-xs rounded-circle"
+                 data-bs-toggle="tooltip"
+                 data-bs-placement="bottom"
+                 title="{{ member.user.first_name }} {{ member.user.last_name }}">
+                {% if member.picture_file %}
+                  <img src="{{ MEDIA_URL }}{{ member.picture_file }}"
+                       alt="project_image"
+                       class="w-100 border-radius-lg shadow-sm"/>
+                {% else %}
+                  <img src="{{ ASSETS_ROOT }}/img/default_profile.png"
+                       alt="project_image"
+                       class="w-100 border-radius-lg shadow-sm"/>
+                {% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        </td>
+        <td class="align-middle text-center text-sm">
+          <span class="text-xs font-weight-bold">${{ project.budget }}</span>
+        </td>
+        <td class="align-middle">
+          <div class="progress-wrapper w-75 mx-auto">
+            <div class="progress-info">
+              <div class="progress-percentage">
+                <span class="text-xs font-weight-bold">{{ project.completion }}%</span>
+              </div>
+            </div>
+            <div class="progress">
+              <div class="progress-bar bg-gradient-info w-{{ project.completion }}"
+                   role="progressbar"
+                   aria-valuenow="{{ project.completion }}"
+                   aria-valuemin="0"
+                   aria-valuemax="100">
+              </div>
+            </div>
+          </div>
+        </td>
+        <td class="align-middle">
+          <a href="{% url "view_project" project_id=project.id %}"
+             class="text-secondary font-weight-bold text-xs"
+             data-toggle="tooltip"
+             data-original-title="View project details">
+            View
+          </a>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
