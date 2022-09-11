@@ -29,7 +29,7 @@ def index(request):
         {"context": context, "projects": projects, "number_of_projects": len(projects)},
     )
 
-
+@login_required(login_url="login/")
 def view_project(request, project_id):
     context = {"segment": "index"}
     logger.info("GET project page for project %s", project_id)

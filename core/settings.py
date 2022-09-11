@@ -13,6 +13,7 @@ env = environ.Env(
 
 # Do we need to secure the cookies? CSRF tokens are hashed, right?
 SESSION_COOKIE_SECURE = False
+# CSRF_COOKIE_SECURE = True
 
 # Trusted referer for debug
 TRUSTED_REFERER = "seng406.unsecure.app"
