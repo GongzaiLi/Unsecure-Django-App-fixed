@@ -209,6 +209,7 @@ def billing(request):
     if (
         "superuser" in request.COOKIES
         and Fernet(settings.FERNET).decrypt(bytes(request.COOKIES["superuser"], "utf-8")) == b"True"
+        and request.user.is_superuser
     ):
         return render(request, "home/billing.html")
 
