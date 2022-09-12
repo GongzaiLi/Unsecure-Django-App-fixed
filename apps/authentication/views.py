@@ -77,7 +77,10 @@ def reset_password(request):
         form = ResetForm(request.POST)
 
         user = User.objects.filter(username=form.data["username"]).first()
-        if form.is_valid() and user is not None and user.email == form.data["email"]:
+
+        valida_password = user.check_password(form.data["old_password"])
+
+        if form.is_valid() and user is not None and user.email == form.data["email"] and valida_password:
             if form.cleaned_data["password1"] == form.cleaned_data["password2"]:
                 user.set_password(form.cleaned_data["password1"])
                 user.save()
@@ -89,6 +92,10 @@ def reset_password(request):
                 msg = "Error/s in form"
 
         else:
+            if user.email != form.data["email"]:
+                form.add_error("email", "Email don't match")
+            if not valida_password:
+                form.add_error("old_password", "Old password don't match")
             logger.debug(form.data)
             msg = "Error/s in form"
 
