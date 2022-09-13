@@ -46,10 +46,10 @@ class ResetForm(forms.Form):
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={"placeholder": "Your email address", "class": "form-control"})
     )
-    old_password = forms.CharField(
-        label="Old Password",
-        widget=forms.PasswordInput(attrs={"placeholder": "Old password", "class": "form-control"}),
-    )
+    # old_password = forms.CharField(
+    #     label="Old Password",
+    #     widget=forms.PasswordInput(attrs={"placeholder": "Old password", "class": "form-control"}),
+    # )
     password1 = forms.CharField(
         label="Password",
         widget=forms.PasswordInput(attrs={"placeholder": "A new password", "class": "form-control"}),
