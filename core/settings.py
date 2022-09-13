@@ -8,7 +8,7 @@ import environ
 
 env = environ.Env(
     # set casting, default value
-    DEBUG=(bool, True)
+    DEBUG=(bool, False)
 )
 
 # Do we need to secure the cookies? CSRF tokens are hashed, right?
