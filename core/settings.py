@@ -8,13 +8,11 @@ import environ
 
 env = environ.Env(
     # set casting, default value
-    # DEBUG=(bool, True)
-    DEBUG=(bool, False)
+    DEBUG=(bool, True)
 )
 
 # Do we need to secure the cookies? CSRF tokens are hashed, right?
 SESSION_COOKIE_SECURE = False
-# CSRF_COOKIE_SECURE = True
 
 # Trusted referer for debug
 TRUSTED_REFERER = "seng406.unsecure.app"
@@ -68,11 +66,7 @@ MIDDLEWARE = [
 ]
 
 PASSWORD_HASHERS = [
-    # "django.contrib.auth.hashers.UnsaltedMD5PasswordHasher",
-    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
-    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
-    "django.contrib.auth.hashers.Argon2PasswordHasher",
-    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    "django.contrib.auth.hashers.UnsaltedMD5PasswordHasher",
 ]
 
 ROOT_URLCONF = "core.urls"

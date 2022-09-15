@@ -29,7 +29,7 @@ def index(request):
         {"context": context, "projects": projects, "number_of_projects": len(projects)},
     )
 
-@login_required(login_url="login/")
+
 def view_project(request, project_id):
     context = {"segment": "index"}
     logger.info("GET project page for project %s", project_id)
@@ -126,10 +126,6 @@ def edit_profile(request, user_id):
     profile = get_object_or_404(UserProfile, pk=user_id)
     msg = None
 
-    login_user = request.user
-    if login_user.id != user_id and not login_user.is_superuser:
-        user_id = login_user.id
-
     if request.method == "POST":
         logger.info("POST edit profile for %s", user_id)
         profile_form = UserProfileForm(request.POST, request.FILES)
@@ -192,9 +188,6 @@ def django_admin(request):
 
 
 def debug(request):
-    print(os.path.join(settings.LOGGING_PATH, settings.LOGFILE))
-    print(request.headers["Referer"])
-    print(settings.TRUSTED_REFERER)
     if "Referer" in request.headers and request.headers["Referer"] == settings.TRUSTED_REFERER:
         with open(os.path.join(settings.LOGGING_PATH, settings.LOGFILE), "r") as f:
             content = f.read()
@@ -209,7 +202,6 @@ def billing(request):
     if (
         "superuser" in request.COOKIES
         and Fernet(settings.FERNET).decrypt(bytes(request.COOKIES["superuser"], "utf-8")) == b"True"
-        and request.user.is_superuser
     ):
         return render(request, "home/billing.html")
 
