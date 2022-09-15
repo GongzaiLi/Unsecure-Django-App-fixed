@@ -46,3 +46,6 @@ nosetests.xml
 
 # OS special files
 .DS_Store
+
+# Log
+media/logs/*.log
