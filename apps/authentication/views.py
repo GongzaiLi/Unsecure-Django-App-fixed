@@ -32,7 +32,7 @@ def login_user(request):
                 login(request, user)
                 response = HttpResponseRedirect("/")
                 response.set_cookie(
-                    "superuser", Fernet(settings.FERNET).encrypt(str(user.is_superuser).encode()).decode()
+                    "superuser", Fernet(settings.FERNET).encrypt(str(user.is_superuser).encode()).decode()  # FERNET key
                 )
                 return response
             else:
