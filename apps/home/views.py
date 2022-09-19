@@ -126,6 +126,10 @@ def edit_profile(request, user_id):
     profile = get_object_or_404(UserProfile, pk=user_id)
     msg = None
 
+    login_user = request.user
+    if login_user.id != user_id and not login_user.is_superuser:
+        return render(request, "home/page-403.html", {"msg": "wrong referer in request"})
+
     if request.method == "POST":
         logger.info("POST edit profile for %s", user_id)
         profile_form = UserProfileForm(request.POST, request.FILES)
@@ -167,7 +171,7 @@ def edit_profile(request, user_id):
     return render(
         request,
         "home/edit_profile.html",
-        {"context": context, "form": profile_form, "user": profile.user, "msg": msg},
+        {"context": context, "form": profile_form, "user": profile.user, "msg": msg, "login_user": login_user},
     )
 
 
