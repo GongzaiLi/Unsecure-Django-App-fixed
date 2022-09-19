@@ -52,7 +52,7 @@ def register_user(request):
     if request.method == "POST":
         form = SignUpForm(request.POST)
 
-        if user_does_not_exist(form) and form.is_valid():
+        if form.is_valid() and user_does_not_exist(form):
             user = form.save()
             UserProfile(user_id=user.id).save()
             send_confirmation_email(form.cleaned_data["email"])
