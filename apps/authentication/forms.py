@@ -40,12 +40,15 @@ class SignUpForm(UserCreationForm):
 
 
 class ResetForm(forms.Form):
-    username = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Your username", "class": "form-control"})
-    )
+    # username = forms.CharField(
+    #     widget=forms.TextInput(attrs={"placeholder": "Your username", "class": "form-control"})
+    # )
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={"placeholder": "Your email address", "class": "form-control"})
     )
+
+
+class ResetPasswordForm(forms.Form):
     password1 = forms.CharField(
         label="Password",
         widget=forms.PasswordInput(attrs={"placeholder": "A new password", "class": "form-control"}),
