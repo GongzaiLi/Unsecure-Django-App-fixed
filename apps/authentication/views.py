@@ -5,7 +5,7 @@ from cryptography.fernet import Fernet
 from django.conf import settings
 from django.core import mail, validators, serializers
 from django.core.exceptions import ValidationError
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
@@ -176,6 +176,13 @@ def reset_password_done(request):
     msg = "Password reset successfully"
     return render(request, "accounts/reset_password.html", {"msg": msg, "success": success})
 
+
+def logout_user(request):
+    logout(request)
+    response = redirect("/login/")
+    for cookie in request.COOKIES:
+        response.delete_cookie(cookie)
+    return response
 
 ##
 # Helper functions
