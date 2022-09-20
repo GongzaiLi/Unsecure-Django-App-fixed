@@ -9,6 +9,12 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_text
+from django.http import HttpResponse
 
 from apps.home.models import UserProfile
 
@@ -53,11 +59,23 @@ def register_user(request):
         form = SignUpForm(request.POST)
 
         if form.is_valid() and user_does_not_exist(form):
-            user = form.save()
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+
             UserProfile(user_id=user.id).save()
-            send_confirmation_email(form.cleaned_data["email"])
+
+            current_site = get_current_site(request)
+            message = render_to_string('accounts/acc_active_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': default_token_generator.make_token(user),
+            })
+
+            send_confirmation_email(form.cleaned_data["email"], message)
             success = True
-            msg = "User created successfully"
+            msg = "User created successfully, Please check your email to confirm"
 
         else:
             logger.debug(form.data)
@@ -124,12 +142,12 @@ def email_is_valid(form):
     return result
 
 
-def send_confirmation_email(email):
+def send_confirmation_email(email, message):
     connection = mail.get_connection()
     connection.open
     to_send = mail.EmailMessage(
         "Welcome to SENG402 Unsecure App",
-        "You'll enjoy playing around with all my flaws.",
+        message,
         "seng402@unsecure.app",
         [email],
         connection=connection,
@@ -150,3 +168,19 @@ def send_reset_password_email(email):
     )
     to_send.send()
     connection.close()
+
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        # return redirect('home')
+        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+    else:
+        return HttpResponse('Activation link is invalid!')
