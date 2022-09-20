@@ -66,7 +66,7 @@ def register_user(request):
             UserProfile(user_id=user.id).save()
 
             current_site = get_current_site(request)
-            message = render_to_string('accounts/acc_active_email.html', {
+            message = render_to_string('accounts/register_active_email.html', {
                 'user': user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -170,7 +170,7 @@ def send_reset_password_email(email):
     connection.close()
 
 
-def activate(request, uidb64, token):
+def register_activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
