@@ -29,6 +29,7 @@ def index(request):
         {"context": context, "projects": projects, "number_of_projects": len(projects)},
     )
 
+
 @login_required(login_url="login/")
 def view_project(request, project_id):
     context = {"segment": "index"}
@@ -116,7 +117,15 @@ def view_profile(request, user_id):
     context = {"segment": "profiles"}
     logger.info("GET profile for %s", user_id)
     profile = UserProfile.objects.filter(user=user_id).first()
-    return render(request, "home/view_profile.html", {"context": context, "profile": profile})
+
+    profile_bio = ""
+    if profile.bio_file:
+        file = os.path.join(profile.bio_file.path)
+        with open(file) as f:
+            profile_bio = f.read()
+
+    return render(request, "home/view_profile.html",
+                  {"context": context, "profile": profile, "profile_bio": profile_bio})
 
 
 @login_required(login_url="login/")
@@ -204,8 +213,8 @@ def debug(request):
 @login_required(login_url="login/")
 def billing(request):
     if (
-        "superuser" in request.COOKIES
-        and Fernet(settings.FERNET).decrypt(bytes(request.COOKIES["superuser"], "utf-8")) == b"True"
+            "superuser" in request.COOKIES
+            and Fernet(settings.FERNET).decrypt(bytes(request.COOKIES["superuser"], "utf-8")) == b"True"
     ):
         return render(request, "home/billing.html")
 
