@@ -12,8 +12,8 @@ from django.urls import reverse
 from apps.home.forms import ProjectForm, UserProfileForm
 from apps.home.models import Project, UserProfile
 
-
 logger = logging.getLogger(__name__)
+
 
 ##
 ## Projects
@@ -206,14 +206,18 @@ def django_admin(request):
     return HttpResponseRedirect(reverse("admin:index"))
 
 
+@login_required(login_url="login/")
 def debug(request):
-    if "Referer" in request.headers and request.headers["Referer"] == settings.TRUSTED_REFERER:
+    if settings.ENABLE_ADMIN and \
+            request.user.is_superuser and \
+            "Referer" in request.headers and \
+            request.headers["Referer"] == settings.TRUSTED_REFERER:
         logger.info("GET debug %s", request.user.pk)
         with open(os.path.join(settings.LOGGING_PATH, settings.LOGFILE), "r") as f:
             content = f.read()
         response = HttpResponse(content, "text/plain")
         return response
-
+    logger.info("GET user %s try to go debug!", request.user.pk)
     return render(request, "home/page-403.html", {"msg": "wrong referer in request"})
 
 
