@@ -83,6 +83,10 @@ def edit_project(request, project_id, user_id):
     msg = None
     project = get_object_or_404(Project, pk=project_id)
 
+    login_user = request.user
+    if login_user.id != user_id:
+        return render(request, "home/page-403.html", {"msg": "user does not belong to project"})
+
     if request.method == "POST":
         logger.info("POST edit project %s", project.name)
         project_form = ProjectForm(data=request.POST, files=request.FILES, instance=project)
