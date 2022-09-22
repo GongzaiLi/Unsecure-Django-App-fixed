@@ -184,7 +184,8 @@ EMAIL_HOST_PASSWORD = ""
 
 # Logging feature, some specific levels per app
 LOGFILE = "log.log"
-LOGGING_PATH = os.path.join(MEDIA_ROOT, "logs")
+LOGGING_ROOT = os.path.join(BASE_DIR, "logs")
+LOGGING_PATH = os.path.join(LOGGING_ROOT)
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
