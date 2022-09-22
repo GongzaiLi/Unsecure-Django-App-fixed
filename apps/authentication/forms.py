@@ -62,3 +62,7 @@ class ResetPasswordForm(forms.Form):
             },
         ),
     )
+
+    class Meta:
+        model = User
+        fields = ("password1", "password2")

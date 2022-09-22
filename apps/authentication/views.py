@@ -15,6 +15,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
 from django.http import HttpResponse
+from django.contrib.auth.password_validation import validate_password
 
 from apps.home.models import UserProfile
 
@@ -159,9 +160,21 @@ def reset_password_confirm(request, uidb64, token):
 
         if request.method == "POST":
             form = ResetPasswordForm(request.POST)
-            user = request.user
+
             if form.is_valid():
+                password1 = form.cleaned_data.get("password1")
+                password2 = form.cleaned_data.get("password2")
+                try:
+                    validate_password(password1, user)
+                    validate_password(password2, user)
+                except ValidationError as e:
+                    logger.debug(form.errors)
+                    msg = "Error/s in form"
+                    return render(request, "accounts/reset_password.html",
+                                  {"form": form, "msg": e, "success": success})
+
                 if form.cleaned_data["password1"] == form.cleaned_data["password2"]:
+                    login(request, user)
                     user.set_password(form.cleaned_data["password1"])
                     user.save()
                     logger.info("POST reset password confirm user  %s", user.pk)
