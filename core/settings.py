@@ -10,9 +10,11 @@ from django.core.management.utils import get_random_secret_key
 
 env = environ.Env(
     # set casting, default value
-    DEBUG=(bool, True)
-    # DEBUG=(bool, False)
+    DEBUG=(bool, True),
+    # DEBUG=(bool, False),
 )
+
+ENABLE_ADMIN = False
 
 # Do we need to secure the cookies? CSRF tokens are hashed, right?
 SESSION_COOKIE_SECURE = False
