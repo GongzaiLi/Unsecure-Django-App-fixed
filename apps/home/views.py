@@ -123,6 +123,9 @@ def view_profile(request, user_id):
     logger.info("GET profile for %s", user_id)
     profile = UserProfile.objects.filter(user=user_id).first()
 
+    if profile is None:
+        return render(request, "home/page-404.html")
+
     profile_bio = ""
     if profile.bio_file:
         file = os.path.join(profile.bio_file.path)
