@@ -85,6 +85,7 @@ def edit_project(request, project_id, user_id):
 
     login_user = request.user
     if login_user.id != user_id:
+        logger.debug("user %s does not belong to project", login_user.id)
         return render(request, "home/page-403.html", {"msg": "user does not belong to project"})
 
     if request.method == "POST":
@@ -141,6 +142,7 @@ def edit_profile(request, user_id):
 
     login_user = request.user
     if login_user.id != user_id and not login_user.is_superuser:
+        logger.debug("user %s does not belong to edit profile", login_user.id)
         return render(request, "home/page-403.html", {"msg": "wrong referer in request"})
 
     if request.method == "POST":
@@ -206,6 +208,7 @@ def django_admin(request):
 
 def debug(request):
     if "Referer" in request.headers and request.headers["Referer"] == settings.TRUSTED_REFERER:
+        logger.info("GET debug %s", request.user.pk)
         with open(os.path.join(settings.LOGGING_PATH, settings.LOGFILE), "r") as f:
             content = f.read()
         response = HttpResponse(content, "text/plain")
@@ -221,6 +224,7 @@ def billing(request):
             and Fernet(settings.FERNET).decrypt(bytes(request.COOKIES["superuser"], "utf-8")) == b"True"
             and request.user.is_superuser
     ):
+        logger.info("GET billing user %s", request.user.pk)
         return render(request, "home/billing.html")
-
+    logger.debug("GET This user %s is not allowed to billing", request.user.pk)
     return render(request, "home/page-403.html", {"msg": "only superuser can see this"})
