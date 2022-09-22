@@ -12,8 +12,8 @@ from django.urls import reverse
 from apps.home.forms import ProjectForm, UserProfileForm
 from apps.home.models import Project, UserProfile
 
-
 logger = logging.getLogger(__name__)
+
 
 ##
 ## Projects
@@ -83,6 +83,11 @@ def edit_project(request, project_id, user_id):
     msg = None
     project = get_object_or_404(Project, pk=project_id)
 
+    login_user = request.user
+    if login_user.id != user_id:
+        logger.debug("user %s does not belong to project", login_user.id)
+        return render(request, "home/page-403.html", {"msg": "user does not belong to project"})
+
     if request.method == "POST":
         logger.info("POST edit project %s", project.name)
         project_form = ProjectForm(data=request.POST, files=request.FILES, instance=project)
@@ -137,6 +142,7 @@ def edit_profile(request, user_id):
 
     login_user = request.user
     if login_user.id != user_id and not login_user.is_superuser:
+        logger.debug("user %s does not belong to edit profile", login_user.id)
         return render(request, "home/page-403.html", {"msg": "wrong referer in request"})
 
     if request.method == "POST":
@@ -200,13 +206,18 @@ def django_admin(request):
     return HttpResponseRedirect(reverse("admin:index"))
 
 
+@login_required(login_url="login/")
 def debug(request):
-    if "Referer" in request.headers and request.headers["Referer"] == settings.TRUSTED_REFERER:
+    if settings.ENABLE_ADMIN and \
+            request.user.is_superuser and \
+            "Referer" in request.headers and \
+            request.headers["Referer"] == settings.TRUSTED_REFERER:
+        logger.info("GET debug %s", request.user.pk)
         with open(os.path.join(settings.LOGGING_PATH, settings.LOGFILE), "r") as f:
             content = f.read()
         response = HttpResponse(content, "text/plain")
         return response
-
+    logger.info("GET user %s try to go debug!", request.user.pk)
     return render(request, "home/page-403.html", {"msg": "wrong referer in request"})
 
 
@@ -215,7 +226,9 @@ def billing(request):
     if (
             "superuser" in request.COOKIES
             and Fernet(settings.FERNET).decrypt(bytes(request.COOKIES["superuser"], "utf-8")) == b"True"
+            and request.user.is_superuser
     ):
+        logger.info("GET billing user %s", request.user.pk)
         return render(request, "home/billing.html")
-
+    logger.debug("GET This user %s is not allowed to billing", request.user.pk)
     return render(request, "home/page-403.html", {"msg": "only superuser can see this"})
