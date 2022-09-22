@@ -168,10 +168,11 @@ def reset_password_confirm(request, uidb64, token):
                     validate_password(password1, user)
                     validate_password(password2, user)
                 except ValidationError as e:
+                    form.add_error('password1', e)
                     logger.debug(form.errors)
                     msg = "Error/s in form"
                     return render(request, "accounts/reset_password.html",
-                                  {"form": form, "msg": e, "success": success})
+                                  {"form": form, "msg": msg, "success": success})
 
                 if form.cleaned_data["password1"] == form.cleaned_data["password2"]:
                     login(request, user)
