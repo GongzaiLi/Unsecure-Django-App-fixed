@@ -5,12 +5,13 @@ Copyright (c) 2019 - present AppSeed.us
 
 import os
 import environ
+from cryptography.fernet import Fernet
 from django.core.management.utils import get_random_secret_key
 
 env = environ.Env(
     # set casting, default value
-    # DEBUG=(bool, True)
-    DEBUG=(bool, False)
+    DEBUG=(bool, True)
+    # DEBUG=(bool, False)
 )
 
 # Do we need to secure the cookies? CSRF tokens are hashed, right?
@@ -18,7 +19,7 @@ SESSION_COOKIE_SECURE = False
 
 # Trusted referer for debug
 TRUSTED_REFERER = "seng406.unsecure.app"
-FERNET = "aZM4LZdyqadieIGUUQ-AoPzl0txkjYpklR5Hm6TptSY="
+FERNET = Fernet.generate_key()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
