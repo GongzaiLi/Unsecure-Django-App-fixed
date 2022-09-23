@@ -5,18 +5,23 @@ Copyright (c) 2019 - present AppSeed.us
 
 import os
 import environ
+from cryptography.fernet import Fernet
+from django.core.management.utils import get_random_secret_key
 
 env = environ.Env(
     # set casting, default value
-    DEBUG=(bool, True)
+    # DEBUG=(bool, True),
+    DEBUG=(bool, False),
 )
+
+ENABLE_ADMIN = False
 
 # Do we need to secure the cookies? CSRF tokens are hashed, right?
 SESSION_COOKIE_SECURE = False
 
 # Trusted referer for debug
 TRUSTED_REFERER = "seng406.unsecure.app"
-FERNET = "aZM4LZdyqadieIGUUQ-AoPzl0txkjYpklR5Hm6TptSY="
+FERNET = Fernet.generate_key()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -26,7 +31,8 @@ CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY", default="S#perS3crEt_007")
+# SECRET_KEY = env("SECRET_KEY", default="S#perS3crEt_007")
+SECRET_KEY = get_random_secret_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
@@ -66,7 +72,11 @@ MIDDLEWARE = [
 ]
 
 PASSWORD_HASHERS = [
-    "django.contrib.auth.hashers.UnsaltedMD5PasswordHasher",
+    # "django.contrib.auth.hashers.UnsaltedMD5PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -125,7 +135,25 @@ else:
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        # 'OPTIONS': {
+        #     'user_attributes': (
+        #         'username', 'email', 'first_name', 'last_name'
+        #     ),
+        #     'max_similarity': 0.5
+        # }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 10,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
@@ -145,19 +173,19 @@ STATIC_URL = "/static/"
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (os.path.join(CORE_DIR, "apps/static"),)
 
-
 # email settings
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = "localhost"
 EMAIL_PORT = 8025
-EMAIL_USE_TLS = False
+EMAIL_USE_TLS = True
 EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
 # run a console SMTP backend with `python -m aiosmtpd -n -l localhost:8025`
 
 # Logging feature, some specific levels per app
 LOGFILE = "log.log"
-LOGGING_PATH = os.path.join(MEDIA_ROOT, "logs")
+LOGGING_ROOT = os.path.join(BASE_DIR, "logs")
+LOGGING_PATH = os.path.join(LOGGING_ROOT)
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

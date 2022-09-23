@@ -16,11 +16,16 @@
               <input type="checkbox" class="d-none" id="theme-switch"/>
             </li>
             <li class="nav-item d-flex align-items-center">
-              <a href="{% url 'login' %}"
+              <a href="{% url 'logout' %}"
                  class="nav-link text-body font-weight-bold px-0">
                 <i class="fa fa-user me-sm-1"></i>
-                <span class="d-sm-inline d-none">LOGOUT {{ user.first_name }}
-                  {% if user.is_superuser %}(superuser){% endif %}
+                <span class="d-sm-inline d-none">LOGOUT
+                    {% if login_user is null %}
+                        {{ user.first_name }}
+                    {% else %}
+                        {{ login_user.first_name }}
+                    {% endif %}
+                  {% if login_user is not null and login_user.is_superuser or user.is_superuser %}(superuser){% endif %}
                 </span>
               </a>
             </li>

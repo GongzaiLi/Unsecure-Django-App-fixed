@@ -49,3 +49,4 @@ nosetests.xml
 
 # Log
 media/logs/*.log
+logs/*.log
